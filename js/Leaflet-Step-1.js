@@ -1,41 +1,43 @@
 // Store our API endpoint inside queryUrl
 // var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=" +
 //   "2021-01-10&maxlongitude=-69.52148437&minlongitude=-123.83789062&maxlatitude=48.74894534&minlatitude=25.16517337";
- 
-  var queryUrl = "data/all_week.geojson.json";
-  var colors = ["#b7f34d","#e1f34d", "#f3db4d","#f3ba4d","#f0a76b","#f06b6b"];
- // Set up the legend
- var legend = L.control({ position: "bottomright" });
- legend.onAdd = function() {
-   var div = L.DomUtil.create("div", "info legend");
-   var limits = [0,1,2,3,4,5];
-   
-   var labels = [];
-   var legendInfo = "<h1>Earthquake<br>Magnitude</h1>" ;
-  
-   div.innerHTML = legendInfo;
 
-   limits.forEach(function(limit, index) {
-     if (index<5)
-     temp=index+"-"+(index+1);
-       else
-       temp=index+"+";
+// var queryUrl = "data/all_week.geojson.json";
+var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+var colors = ["#ff00ff", "#800080", "#cc00cc", "#f3ba4d", "#800080", "#ff80ff"];
+// var API_KEY = "pk.eyJ1IjoidHB1dHJpIiwiYSI6ImNsMGFwbDlxbzBmMjkzanJ0MWN1YWlvZTgifQ.SrluSt_9zZKo4eTijXwDog";
+// Set up the legend
+var legend = L.control({ position: "bottomright" });
+legend.onAdd = function () {
+  var div = L.DomUtil.create("div", "info legend");
+  var limits = [0, 1, 2, 3, 4, 5];
 
-     labels.push("<div style=\"text-align: center;width: 40px; line-height: 1.8 ;margin: 1 auto;background-color: " + colors[index] + "\"><strong>"+temp+"</strong></div>");
-   });
+  var labels = [];
+  var legendInfo = "<h1>Earthquake<br>Magnitude</h1>";
 
-   div.innerHTML += "<ul>" + labels.join("") + "</ul>";
-   return div;
- };
+  div.innerHTML = legendInfo;
 
- // Adding legend to the map
- 
+  limits.forEach(function (limit, index) {
+    if (index < 5)
+      temp = index + "-" + (index + 1);
+    else
+      temp = index + "+";
+
+    labels.push("<div style=\"text-align: center;width: 40px; line-height: 1.8 ;margin: 1 auto;background-color: " + colors[index] + "\"><strong>" + temp + "</strong></div>");
+  });
+
+  div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+  return div;
+};
+
+// Adding legend to the map
+
 
 // Perform a GET request to the query URL
-d3.json(queryUrl).then(function(data) {
+d3.json(queryUrl).then(function (data) {
   // Once we get a response, send the data.features object to the createFeatures function
-  console.log("hatim",data);
-  
+  console.log("hatim", data);
+
   createFeatures(data.features);
 });
 
@@ -45,20 +47,20 @@ function createFeatures(earthquakeData) {
   // Give each feature a popup describing the place and time of the earthquake
   function onEachFeature(feature, layer) {
     layer.bindPopup("<h3>" + feature.properties.place +
-      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>"+"Magnitude"+feature.properties.mag);
+      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>" + "Magnitude" + feature.properties.mag);
   }
 
   // Create a GeoJSON layer containing the features array on the earthquakeData object
   // Run the onEachFeature function once for each piece of data in the array
   var earthquakes = L.geoJSON(earthquakeData, {
-    pointToLayer: function(feature, latlng) {
+    pointToLayer: function (feature, latlng) {
       return new L.CircleMarker(latlng, {
-        radius: feature.properties.mag*5,
+        radius: feature.properties.mag * 5,
         color: "#000000",
-        fillColor:colors[Math.trunc(feature.properties.mag)],
+        fillColor: colors[Math.trunc(feature.properties.mag)],
         stroke: true,
         fillOpacity: 0.8,
-        weight : 1,
+        weight: 1,
       });
     },
     onEachFeature: onEachFeature
@@ -97,16 +99,16 @@ function createMap(earthquakes) {
   var baseMaps = {
     "Satellite": Satellite,
     "Grayscale": Grayscale,
-    "Outdoors":Outdoors
+    "Outdoors": Outdoors
   };
-  
+
 
   // Create overlay object to hold our overlay layer
   var overlayMaps = {
-    
+
     Earthquakes: earthquakes,
     "Tectonic Plates": tectonicplates
-    
+
   };
 
   // Create our map, giving it the streetmap and earthquakes layers to display on load
@@ -127,6 +129,6 @@ function createMap(earthquakes) {
     collapsed: false
   }).addTo(myMap);
   // Adding legend to the map
-legend.addTo(myMap);
+  legend.addTo(myMap);
 
 }
