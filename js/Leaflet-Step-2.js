@@ -5,11 +5,11 @@ var tectonicplates = L.layerGroup();
  
 function Add_plates(){
   var platesData = "data/plates.geojson.json";
-  console.log("hatim ssssss");
+  console.log("tp");
   
   
   d3.json(platesData).then(function(data) {
-      console.log("hatim",data);
+      console.log("tp",data);
    tectonicplates =    L.geoJSON(data, {
       color: "orange",
       weight: 3,
