@@ -36,7 +36,7 @@ legend.onAdd = function () {
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function (data) {
   // Once we get a response, send the data.features object to the createFeatures function
-  console.log("hatim", data);
+  console.log("tp", data);
 
   createFeatures(data.features);
 });
